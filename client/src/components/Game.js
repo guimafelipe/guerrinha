@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import EnemyUI from './EnemyUI';
-// import GameScreen from './GameScreen';
+import GameScreen from './GameScreen';
 // import PlayerUI from './PlayerUI';
 // import ButtonsGroup from './ButtonsGroup';
 
@@ -20,6 +20,7 @@ class Game extends Component {
             <div class="game">
                 <EnemyUI enemyName={"inimigo"} bullets={2} lifes={3}/>
 
+                <GameScreen enemyState={"idle"} playerState={"idle"}/>
 
                 <p>Aqui aparece coisas do gameplay </p>
             </div>
