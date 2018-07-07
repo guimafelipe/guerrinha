@@ -12,12 +12,13 @@ class GameScreen extends Component {
     render (){
         return (
             <div>
-                <span> Player: {this.state.playerState}</span>
-                <span> x </span>
-                <span> Enemy: {this.state.enemyState}</span>
+                <div>Player {this.state.playerState}</div>
+                <div> x </div>
+                <div>Enemy {this.state.enemyState}</div>
             </div>
         );
     }
+
 }
 
 //Renderiza a ação do inimigo e a ação do player

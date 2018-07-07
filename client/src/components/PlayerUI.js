@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import Bullets from './Bullets';
 import Lifes from './Lifes';
 
-class EnemyUI extends Component {
+class PlayerUI extends Component {
     constructor (props) {
         super();
         this.state = {
-            name: props.enemyName,
+            name: props.playerName,
             bullets: props.bullets,
             lifes: props.lifes,
         }
@@ -23,4 +23,4 @@ class EnemyUI extends Component {
     }
 }
 
-export default EnemyUI;
+export default PlayerUI;
