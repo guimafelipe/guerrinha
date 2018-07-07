@@ -26,6 +26,9 @@ class Game extends Component {
             enemyLifes: prevState.enemyLifes - 1,
             playerBullets: prevState.playerBullets - 1,
         }));
+        if(this.socket){
+            this.socket.emit("setState", {state: "shot"});
+        }
     }
 
     reloadHandle () {
@@ -44,8 +47,13 @@ class Game extends Component {
         //pedir aqui informações do socket
     }
 
+    updateSocket(skt){
+        if(this.socket) return;
+        this.socket = skt;
+    }
+
     render (){
-        console.log('renderizando');
+        this.updateSocket(this.props.socket); //Gambiarra? Talvez...
         return (
             <div className="game">
                 <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>
