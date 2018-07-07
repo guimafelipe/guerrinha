@@ -15,6 +15,9 @@ const io = socket(server);
 
 const getApiAndEmit = "TODO";
 
+players = []; // Lista de players online
+//Primeiro vou fazer um teste com dos players só
+matches = []; // Lista de partidas acontecendo
 
 io.on("connection", socket => {
     console.log("New client connected");

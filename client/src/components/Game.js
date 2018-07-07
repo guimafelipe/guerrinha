@@ -43,10 +43,6 @@ class Game extends Component {
         alert("atirou");
     }
 
-    componentDidMount(){
-        //pedir aqui informações do socket
-    }
-
     updateSocket(skt){
         if(this.socket) return;
         this.socket = skt;
