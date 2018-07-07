@@ -17,8 +17,8 @@ class ButtonsGroup extends Component {
             <div>
                 <Button handle={this.state.shotHandle} name={"Shot"}/>
                 <Button handle={this.state.reloadHandle} name={"Reload"}/>
-                <Button handle={this.state.shotHandle} name={"Shield"}/>
-                <Button handle={this.state.shieldHandle} name={"Quit"}/>
+                <Button handle={this.state.shieldHandle} name={"Shield"}/>
+                <Button handle={this.state.quitHandle} name={"Quit"}/>
             </div>
         );
     }

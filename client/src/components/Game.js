@@ -3,19 +3,40 @@ import EnemyUI from './EnemyUI';
 import GameScreen from './GameScreen';
 import PlayerUI from './PlayerUI';
 import ButtonsGroup from './ButtonsGroup';
-// import ButtonsGroup from './ButtonsGroup';
 
 class Game extends Component {
     constructor (props) {
         super();
         this.state = {
             socket: props.socket,
+            name: 'game',
         }
+        this.shotHandle = this.shotHandle.bind(this);
+        this.reloadHandle = this.reloadHandle.bind(this);
+        this.shieldHandle = this.shieldHandle.bind(this);
+        this.quitHandle = this.quitHandle.bind(this);
+    }
+
+    shotHandle () {
+        alert(this.state);
+    }
+
+    reloadHandle () {
+        alert("atirou");
+    }
+
+    shieldHandle () {
+        alert("atirou");
+    }
+
+    quitHandle () {
+        alert("atirou");
     }
 
     componentDidMount(){
         //pedir aqui informações do socket
     }
+
     render (){
         return (
             <div class="game">
@@ -25,7 +46,8 @@ class Game extends Component {
                 <p></p>
                 <PlayerUI playerName={"player"} bullets={3} lifes={1}/>
                 <p></p>
-                <ButtonsGroup/>
+                <ButtonsGroup shotHandle={this.shotHandle} reloadHandle={this.reloadHandle}
+                 shieldHandle={this.shieldHandle} quitHandle={this.quitHandle}/>
                 <p>Aqui aparece coisas do gameplay </p>
             </div>
         )
