@@ -6,10 +6,14 @@ import ButtonsGroup from './ButtonsGroup';
 
 class Game extends Component {
     constructor (props) {
-        super();
+        super(props);
         this.state = {
-            socket: props.socket,
-            name: 'game',
+            playerName: "player",
+            enemyName: "inimigo",
+            playerBullets: 1,
+            enemyBullets: 2,
+            playerLifes: 3,
+            enemyLifes:2,
         }
         this.shotHandle = this.shotHandle.bind(this);
         this.reloadHandle = this.reloadHandle.bind(this);
@@ -18,7 +22,10 @@ class Game extends Component {
     }
 
     shotHandle () {
-        alert(this.state);
+        this.setState((prevState, props) => ({
+            enemyLifes: prevState.enemyLifes - 1,
+            playerBullets: prevState.playerBullets - 1,
+        }));
     }
 
     reloadHandle () {
@@ -38,13 +45,14 @@ class Game extends Component {
     }
 
     render (){
+        console.log('renderizando');
         return (
-            <div class="game">
-                <EnemyUI enemyName={"inimigo"} bullets={2} lifes={3}/>
+            <div className="game">
+                <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>
                 <p></p>
                 <GameScreen enemyState={"idle"} playerState={"idle"}/>
                 <p></p>
-                <PlayerUI playerName={"player"} bullets={3} lifes={1}/>
+                <PlayerUI name={this.state.playerName} bullets={this.state.playerBullets} lifes={this.state.playerLifes}/>
                 <p></p>
                 <ButtonsGroup shotHandle={this.shotHandle} reloadHandle={this.reloadHandle}
                  shieldHandle={this.shieldHandle} quitHandle={this.quitHandle}/>

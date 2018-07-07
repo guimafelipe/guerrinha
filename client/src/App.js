@@ -11,20 +11,22 @@ class App extends Component {
     super();
     this.state = {
       response: false,
-      endpoint: SERVER + PORT
+      endpoint: SERVER + PORT,
+      socket: null,
     }
   }
 
   componentDidMount() {
     const {endpoint} = this.state;
-    const socket = socketIOClient(endpoint);
+    const skt = socketIOClient(endpoint);
+    this.setState({socket: skt});
   }
 
   render() {
     return (
       <div className="App">
         <Lobby/>
-        <Game/>
+        <Game socket={this.state.socket}/>
       </div>
     );
   }

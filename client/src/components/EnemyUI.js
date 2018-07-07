@@ -3,21 +3,12 @@ import Bullets from './Bullets';
 import Lifes from './Lifes';
 
 class EnemyUI extends Component {
-    constructor (props) {
-        super();
-        this.state = {
-            name: props.enemyName,
-            bullets: props.bullets,
-            lifes: props.lifes,
-        }
-    }
-
     render (){
         return (
             <div>
-                <div> {this.state.name} </div>
-                <Lifes qnt={this.state.lifes}/>
-                <Bullets qnt={this.state.bullets}/>
+                <div> {this.props.name} </div>
+                <Lifes qnt={this.props.lifes}/>
+                <Bullets qnt={this.props.bullets}/>
             </div>
         );
     }

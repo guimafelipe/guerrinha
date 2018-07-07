@@ -10,7 +10,7 @@ class Lobby extends Component {
     }
     render() {
          return (
-            <div class="LobbyList">
+            <div className="LobbyList">
                <p> esse é o lobby</p> 
             </div>
          ); //Aqui deve ter um for iterando em playersList pra criar botões 

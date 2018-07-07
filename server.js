@@ -19,6 +19,9 @@ const getApiAndEmit = "TODO";
 io.on("connection", socket => {
     console.log("New client connected");
     socket.on("disconnect", () => console.log("Client disconnected"));
+    socket.on("setState", res => {
+        console.log(res.state);
+    });
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
