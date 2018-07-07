@@ -52,8 +52,13 @@ class Game extends Component {
         this.socket = skt;
     }
 
+    componentWillReceiveProps(nextProps){
+        if(!this.props.socket && nextProps.socket){
+            this.updateSocket(nextProps.socket);
+        }
+    }
+
     render (){
-        this.updateSocket(this.props.socket); //Gambiarra? Talvez...
         return (
             <div className="game">
                 <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>
