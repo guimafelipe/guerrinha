@@ -27,7 +27,7 @@ function sendEventToGame(event, room, msg){
 
 function socketSetup(socket){
     socket.on("setAction", action => {
-        match.updateNextAction(socket.id, action);
+        match.updateNextAction(socket.id, action.action);
         match.updateStates();
         pushState(player1.id, match);
         pushState(player2.id, match);
@@ -54,12 +54,13 @@ function gameLoop(match){
 
 io.on("connection", socket => {
     console.log("New client connected");
-    socketSetup(socket);
     if(!player1) {
         player1 = new Player("fulano1", socket.id);
     } else {
         player2 = new Player("fulano2", socket.id);
         match = new Match(player1, player2);
+        socketSetup(io.sockets.connected[player1.id]);
+        socketSetup(socket);
     }
     socket.on("disconnect", () => console.log("Client disconnected"));
 });

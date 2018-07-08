@@ -1,9 +1,9 @@
 const Player = require('./Player');
 
 module.exports = class Match {
-    constuctor(nome1, nome2){
-        this.player1 = new Player(nome1);
-        this.player2 = new Player(nome2);
+    constructor(player1, player2){
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     turnCheck(action1, action2){ //strings
@@ -48,14 +48,14 @@ module.exports = class Match {
             player2: this.player2,
         };
         if(playerid == this.player2.id){
-            aux = res.player1;
+            let aux = res.player1;
             res.player1 = res.player2;
             res.player2 = aux;
         }
         return res;
     }
 
-    updateNextAction(plyerid, action){
+    updateNextAction(playerid, action){
         if(this.player1.id == playerid){
             this.p1_nextAction = action;
         } else if (this.player2.id == playerid){

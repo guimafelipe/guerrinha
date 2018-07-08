@@ -21,6 +21,11 @@ module.exports = class Player{
         this.bullets -= 1;
     }
 
+    get isDead(){
+        if(this.lifes <= 0) return true;
+        return false;
+    }
+
     get canShot(){
         if(this.bullets >= 0) return true;
         return false;

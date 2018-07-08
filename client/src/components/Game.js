@@ -22,30 +22,35 @@ class Game extends Component {
     }
 
     shotHandle () {
-        this.setState((prevState, props) => ({
-            enemyLifes: prevState.enemyLifes - 1,
-            playerBullets: prevState.playerBullets - 1,
-        }));
         if(this.socket){
-            this.socket.emit("setState", {state: "shot"});
+            this.socket.emit("setAction", {action: "shot"});
         }
     }
 
     reloadHandle () {
-        alert("atirou");
+        if(this.socket){
+            this.socket.emit("setAction", {action: "reload"});
+        }
     }
 
     shieldHandle () {
-        alert("atirou");
+        if(this.socket){
+            this.socket.emit("setAction", {action: "shield"});
+        }
     }
 
     quitHandle () {
-        alert("atirou");
+        if(this.socket){
+            this.socket.emit("setAction", {action: "quit"});
+        }
     }
 
     updateSocket(skt){
         if(this.socket) return;
         this.socket = skt;
+        this.socket.on('stateUpdate', (state) => {
+            console.log("chegou update");
+        });
     }
 
     componentWillReceiveProps(nextProps){
