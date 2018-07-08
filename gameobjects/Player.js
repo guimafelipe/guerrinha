@@ -2,7 +2,8 @@ module.exports = class Player{
     // name
     // lifes
     // bullets
-    constructor(name){
+    constructor(name, id){
+        this.id = id; //Socket id
         this.name = name;
         this.bullets = 0;
         this.lifes = 3;

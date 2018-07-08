@@ -41,4 +41,29 @@ module.exports = class Match {
 
         return 'notyet';
     }
+
+    state(playerid){
+        let res = {
+            player1: this.player1,
+            player2: this.player2,
+        };
+        if(playerid == this.player2.id){
+            aux = res.player1;
+            res.player1 = res.player2;
+            res.player2 = aux;
+        }
+        return res;
+    }
+
+    updateNextAction(plyerid, action){
+        if(this.player1.id == playerid){
+            this.p1_nextAction = action;
+        } else if (this.player2.id == playerid){
+            this.p2_nextAction = action;
+        }
+    }
+
+    updateStates(){
+        this.turnCheck(this.p1_nextAction, this.p2_nextAction);
+    }
 }
