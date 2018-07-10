@@ -1,9 +1,15 @@
 const Player = require('./Player');
 
 module.exports = class Match {
-    constructor(player1, player2){
+    constructor(player1, player2, io, room){
         this.player1 = player1;
         this.player2 = player2;
+        this.io = io;
+
+        this.loopState = 'awaiting';
+
+        // Setup sockets rooms
+        this.gameLoop();
     }
 
     turnCheck(action1, action2){ //strings
@@ -63,7 +69,36 @@ module.exports = class Match {
         }
     }
 
+    countdown(seconds){
+        return new Promise(resolve => {
+            setTimeout(resolve, seconds*1000);
+        });
+    }
+
+    async gameLoop(){
+        while(this.winCheck() == 'notyet'){
+            console.log('loop started');
+            await this.countdown(5);
+            console.log('countdown ended');
+            await this.updateStates();
+            await this.pushStates();
+        }
+        console.log(this.winCheck());
+    }
+
+    pushStates(){
+        return new Promise(resolve => {
+            this.io.sockets.connected[this.player1.id].emit('stateUpdate', this.state(this.player1.id));
+            this.io.sockets.connected[this.player2.id].emit('stateUpdate', this.state(this.player2.id));
+            resolve();
+        })
+    }
+
     updateStates(){
-        this.turnCheck(this.p1_nextAction, this.p2_nextAction);
+        return new Promise(resolve => {
+            this.turnCheck(this.p1_nextAction, this.p2_nextAction);
+            console.log(this.p1_nextAction, this.p2_nextAction);
+            resolve();
+        });
     }
 }

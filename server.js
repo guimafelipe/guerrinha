@@ -18,39 +18,13 @@ const io = socket(server);
 //Primeiro vou fazer um teste com dos players só
 // matches = []; // Lista de partidas acontecendo
 
-function pushState(socketID, match){
-    io.sockets.connected[socketID].emit("stateUpdate", match.state(socketID));
-}
-
-function sendEventToGame(event, room, msg){
-}
-
 function socketSetup(socket){
     socket.on("setAction", action => {
         match.updateNextAction(socket.id, action.action);
-        match.updateStates();
-        pushState(player1.id, match);
-        pushState(player2.id, match);
     });
 }
 
 var player1, player2, match;
-
-function gameLoop(match){
-    //io manda evento de que vai começar
-
-    //espera ok dos players
-
-    //começa rounds
-    //emit evendo de start round
-    //faz loop pra emitir eventos de countdown
-
-    //pega o input
-    //atualiza o estado
-
-    //dá push nos inputs
-    
-}
 
 io.on("connection", socket => {
     console.log("New client connected");
@@ -58,7 +32,7 @@ io.on("connection", socket => {
         player1 = new Player("fulano1", socket.id);
     } else {
         player2 = new Player("fulano2", socket.id);
-        match = new Match(player1, player2);
+        match = new Match(player1, player2, io);
         socketSetup(io.sockets.connected[player1.id]);
         socketSetup(socket);
     }

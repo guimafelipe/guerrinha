@@ -49,12 +49,12 @@ class Game extends Component {
         if(this.socket) return;
         this.socket = skt;
         this.socket.on('stateUpdate', (state) => {
-            console.log("chegou update");
+            console.log(state); // Just for debug
         });
     }
 
     componentWillReceiveProps(nextProps){
-        if(!this.props.socket && nextProps.socket){
+        if(!this.props.socket && nextProps.socket){ //Recebe o novo socket
             this.updateSocket(nextProps.socket);
         }
     }

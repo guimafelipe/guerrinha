@@ -26,8 +26,8 @@ module.exports = class Player{
         return false;
     }
 
-    get canShot(){
-        if(this.bullets >= 0) return true;
+    get canShoot(){
+        if(this.bullets > 0) return true;
         return false;
     }
 }
