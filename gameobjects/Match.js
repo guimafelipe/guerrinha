@@ -16,15 +16,15 @@ module.exports = class Match {
         if(action1 === "shot"){
             if(this.player1.canShoot && action2 !== "shield") {
                 this.player2.getDamage(1);
-                this.player1.shoot();
             }
+            this.player1.shoot();
         }
 
         if(action2 === "shot"){
             if(this.player2.canShoot && action1 !== "shield") {
                 this.player1.getDamage(1);
-                this.player2.shoot();
             }
+            this.player2.shoot();
         }
 
         if(action1 === "reload") this.player1.reload();
@@ -83,11 +83,15 @@ module.exports = class Match {
             await this.countdown(5);
             console.log('countdown ended');
             this.sendEventToPlayers('roundEnd');
+            // A problem that i faced is that when the round ends, i asked for sockets to push their actions to server
+            // The problem is that i need to "wait" this results or server will run following lines without them
+            // But if one of the players disconnect, i cant wait forever
+            // My curr solution is to push the action at the moment player presses it, but it can lead to lag issues.
             await this.updateStates();
             await this.pushStates();
             await this.countdown(1);
         }
-        console.log(this.winCheck());
+        this.sendResult(this.winCheck());
     }
 
     pushStates(){
@@ -102,6 +106,8 @@ module.exports = class Match {
         return new Promise(resolve => {
             this.turnCheck(this.p1_nextAction, this.p2_nextAction);
             console.log(this.p1_nextAction, this.p2_nextAction);
+            this.p1_nextAction = undefined;
+            this.p2_nextAction = undefined;
             resolve();
         });
     }
@@ -111,4 +117,8 @@ module.exports = class Match {
         this.io.sockets.connected[this.player2.id].emit(message);
     }
 
+    sendResult(result){
+        this.io.sockets.connected[this.player1.id].emit('result', result);
+        this.io.sockets.connected[this.player2.id].emit('result', result);
+    }
 }

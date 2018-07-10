@@ -73,6 +73,9 @@ class Game extends Component {
         this.socket.on('roundEnd', () => {
             this.setState({roundStage:'animationStage'});
         });
+        this.socket.on('matchEnd', (result) => {
+            this.setState({roundStage: result});
+        });
     }
 
     componentWillReceiveProps(nextProps){
