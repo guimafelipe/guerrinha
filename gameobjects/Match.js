@@ -76,6 +76,7 @@ module.exports = class Match {
     }
 
     async gameLoop(){
+        await this.pushStates();
         while(this.winCheck() == 'notyet'){
             console.log('loop started');
             this.sendEventToPlayers('roundStart');
@@ -84,6 +85,7 @@ module.exports = class Match {
             this.sendEventToPlayers('roundEnd');
             await this.updateStates();
             await this.pushStates();
+            await this.countdown(1);
         }
         console.log(this.winCheck());
     }

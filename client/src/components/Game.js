@@ -14,6 +14,7 @@ class Game extends Component {
             enemyBullets: 2,
             playerLifes: 3,
             enemyLifes:2,
+            roundStage: 'inputStage', 
         }
         this.shotHandle = this.shotHandle.bind(this);
         this.reloadHandle = this.reloadHandle.bind(this);
@@ -24,24 +25,29 @@ class Game extends Component {
     shotHandle () {
         if(this.socket){
             this.myAction = 'shot';
+            this.socket.emit("setAction", {action: this.myAction}); //Need to emit here because server will not wait for events.
+            // To improve the UX, should wait server send action confirmation to disable the button
         }
     }
 
     reloadHandle () {
         if(this.socket){
             this.myAction = 'reload';
+            this.socket.emit("setAction", {action: this.myAction});
         }
     }
 
     shieldHandle () {
         if(this.socket){
             this.myAction = 'shield';
+            this.socket.emit("setAction", {action: this.myAction});
         }
     }
 
     quitHandle () {
         if(this.socket){
             this.myAction = 'quit';
+            this.socket.emit("setAction", {action: this.myAction});
         }
     }
 
@@ -53,18 +59,19 @@ class Game extends Component {
             let player2 = stats.player2;
             this.setState({
                 playerName: player1.name,
-                enemyName: player2.name,
                 playerBullets: player1.bullets,
                 playerLifes: player1.lifes,
+                enemyName: player2.name,
                 enemyBullets: player2.bullets,
                 enemyLifes: player2.lifes,
             });
         });
         this.socket.on('roundStart', () => {
-                this.myAction = 'nothing';
+            this.myAction = 'nothing';
+            this.setState({roundStage: 'inputStage'});
         })
         this.socket.on('roundEnd', () => {
-            this.socket.emit("setAction", {action: this.myAction});
+            this.setState({roundStage:'animationStage'});
         });
     }
 
@@ -78,6 +85,8 @@ class Game extends Component {
         return (
             <div className="game">
                 <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>
+                <p></p>
+                <p>{this.state.roundStage}</p>
                 <p></p>
                 <GameScreen enemyState={"idle"} playerState={"idle"}/>
                 <p></p>
