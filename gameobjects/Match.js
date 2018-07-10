@@ -78,8 +78,10 @@ module.exports = class Match {
     async gameLoop(){
         while(this.winCheck() == 'notyet'){
             console.log('loop started');
+            this.sendEventToPlayers('roundStart');
             await this.countdown(5);
             console.log('countdown ended');
+            this.sendEventToPlayers('roundEnd');
             await this.updateStates();
             await this.pushStates();
         }
@@ -101,4 +103,10 @@ module.exports = class Match {
             resolve();
         });
     }
+
+    sendEventToPlayers(message){ //Need to refactor this to rooms, maybe better even with only 2 player per room
+        this.io.sockets.connected[this.player1.id].emit(message);
+        this.io.sockets.connected[this.player2.id].emit(message);
+    }
+
 }

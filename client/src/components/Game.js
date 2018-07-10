@@ -23,33 +23,48 @@ class Game extends Component {
 
     shotHandle () {
         if(this.socket){
-            this.socket.emit("setAction", {action: "shot"});
+            this.myAction = 'shot';
         }
     }
 
     reloadHandle () {
         if(this.socket){
-            this.socket.emit("setAction", {action: "reload"});
+            this.myAction = 'reload';
         }
     }
 
     shieldHandle () {
         if(this.socket){
-            this.socket.emit("setAction", {action: "shield"});
+            this.myAction = 'shield';
         }
     }
 
     quitHandle () {
         if(this.socket){
-            this.socket.emit("setAction", {action: "quit"});
+            this.myAction = 'quit';
         }
     }
 
     updateSocket(skt){
         if(this.socket) return;
         this.socket = skt;
-        this.socket.on('stateUpdate', (state) => {
-            console.log(state); // Just for debug
+        this.socket.on('stateUpdate', (stats) => {
+            let player1 = stats.player1;
+            let player2 = stats.player2;
+            this.setState({
+                playerName: player1.name,
+                enemyName: player2.name,
+                playerBullets: player1.bullets,
+                playerLifes: player1.lifes,
+                enemyBullets: player2.bullets,
+                enemyLifes: player2.lifes,
+            });
+        });
+        this.socket.on('roundStart', () => {
+                this.myAction = 'nothing';
+        })
+        this.socket.on('roundEnd', () => {
+            this.socket.emit("setAction", {action: this.myAction});
         });
     }
 
