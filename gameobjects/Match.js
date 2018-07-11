@@ -75,6 +75,7 @@ module.exports = class Match {
         });
     }
 
+    //Main game loop runs here
     async gameLoop(){
         await this.pushStates();
         while(this.winCheck() == 'notyet'){
@@ -82,7 +83,7 @@ module.exports = class Match {
             this.sendEventToPlayers('roundStart');
             await this.countdown(5);
             console.log('countdown ended');
-            this.sendEventToPlayers('roundEnd');
+            this.sendRoundEndData();
             // A problem that i faced is that when the round ends, i asked for sockets to push their actions to server
             // The problem is that i need to "wait" this results or server will run following lines without them
             // But if one of the players disconnect, i cant wait forever
@@ -120,5 +121,25 @@ module.exports = class Match {
     sendResult(result){
         this.io.sockets.connected[this.player1.id].emit('result', result);
         this.io.sockets.connected[this.player2.id].emit('result', result);
+    }
+
+    sendRoundEndData(){
+        this.io.sockets.connected[this.player1.id].emit('roundEnd', this.constructAnimData(this.player1.id));
+        this.io.sockets.connected[this.player2.id].emit('roundEnd', this.constructAnimData(this.player2.id));
+    }
+
+    constructAnimData(playerid){
+        if(playerid == this.player1.id){
+            return {
+                playerAnim: this.p1_nextAction,
+                enemyAnim: this.p2_nextAction,
+            }
+        } else {
+            return {
+                playerAnim: this.p2_nextAction,
+                enemyAnim: this.p1_nextAction,
+            }
+        }
+
     }
 }

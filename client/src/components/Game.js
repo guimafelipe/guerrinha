@@ -14,6 +14,8 @@ class Game extends Component {
             enemyBullets: 2,
             playerLifes: 3,
             enemyLifes:2,
+            playerAnim: 'idle',
+            enemyAnim: 'idle',
             roundStage: 'inputStage', 
         }
         this.shotHandle = this.shotHandle.bind(this);
@@ -54,9 +56,7 @@ class Game extends Component {
     updateSocket(skt){
         if(this.socket) return;
         this.socket = skt;
-        this.socket.on('stateUpdate', (stats) => {
-            let player1 = stats.player1;
-            let player2 = stats.player2;
+        this.socket.on('stateUpdate', ({player1, player2}) => {
             this.setState({
                 playerName: player1.name,
                 playerBullets: player1.bullets,
@@ -68,10 +68,19 @@ class Game extends Component {
         });
         this.socket.on('roundStart', () => {
             this.myAction = 'nothing';
-            this.setState({roundStage: 'inputStage'});
+            this.socket.emit("setAction", {action: this.myAction});
+            this.setState({
+                roundStage: 'inputStage',
+                playerAnim: 'idle',
+                enemyAnim: 'idle',
+            });
         })
-        this.socket.on('roundEnd', () => {
-            this.setState({roundStage:'animationStage'});
+        this.socket.on('roundEnd', ({playerAnim, enemyAnim}) => {
+            this.setState({
+                roundStage: 'animationStage',
+                playerAnim: playerAnim,
+                enemyAnim: enemyAnim,
+            });
         });
         this.socket.on('matchEnd', (result) => {
             this.setState({roundStage: result});
@@ -91,7 +100,7 @@ class Game extends Component {
                 <p></p>
                 <p>{this.state.roundStage}</p>
                 <p></p>
-                <GameScreen enemyState={"idle"} playerState={"idle"}/>
+                <GameScreen enemyState={this.state.playerAnim} playerState={this.state.enemyAnim}/>
                 <p></p>
                 <PlayerUI name={this.state.playerName} bullets={this.state.playerBullets} lifes={this.state.playerLifes}/>
                 <p></p>
