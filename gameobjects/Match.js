@@ -12,53 +12,63 @@ module.exports = class Match {
         this.gameLoop();
     }
 
+    //Main game loop runs here
+    async gameLoop(){
+        this.sendEventToPlayers('stateUpdate', this.state(this.player1.id), this.state(this.player2.id));
+        while(this.winCheck() == 'notyet'){
+            console.log('loop started');
+            this.sendEventToPlayers('roundStart');
+
+            await this.countdown(5);
+            console.log('countdown ended');
+
+            this.sendEventToPlayers('roundEnd', this.constructAnimData(this.player1.id), this.constructAnimData(this.player2.id));
+
+            // A problem that i faced is that when the round ends, i asked for sockets to push their actions to server
+            // The problem is that i need to "wait" this results or server will run following lines without them
+            // But if one of the players disconnect, i cant wait forever
+            // My curr solution is to push the action at the moment player presses it, but it can lead to lag issues.
+            await this.updateStates();
+
+            this.sendEventToPlayers('stateUpdate', this.state(this.player1.id), this.state(this.player2.id));
+
+            await this.countdown(1);
+        }
+        this.sendEventToPlayers('matchEnd', this.winCheck());
+    }
+
     turnCheck(action1, action2){ //strings
         if(action1 === "shot"){
-            if(this.player1.canShoot && action2 !== "shield") {
-                this.player2.getDamage(1);
-            }
+            if(this.player1.canShoot && action2 !== "shield") this.player2.getDamage(1);
             this.player1.shoot();
         }
 
         if(action2 === "shot"){
-            if(this.player2.canShoot && action1 !== "shield") {
-                this.player1.getDamage(1);
-            }
+            if(this.player2.canShoot && action1 !== "shield") this.player1.getDamage(1);
             this.player2.shoot();
         }
-
         if(action1 === "reload") this.player1.reload();
-
         if(action2 === "reload") this.player2.reload();
     }
 
     winCheck(){
-        if(this.player1.isDead && this.player2.isDead){
-            return 'draw';
-        }
-
-        if(this.player1.isDead){
-            return '2win';
-        }
-
-        if(this.player2.isDead){
-            return '1win';
-        }
-
+        if(this.player1.isDead && this.player2.isDead) return 'draw';
+        if(this.player1.isDead) return '2win';
+        if(this.player2.isDead) return '1win';
         return 'notyet';
     }
 
+    sendEventToPlayers(message, data1, data2){ //Need to refactor this to rooms, maybe better even with only 2 player per room
+        this.io.sockets.connected[this.player1.id].emit(message, data1);
+        this.io.sockets.connected[this.player2.id].emit(message, data2 || data1); //Send data2 if exists, or else send data 1
+    }
+
     state(playerid){
-        let res = {
-            player1: this.player1,
-            player2: this.player2,
+        let isPlayer1 = (playerid == this.player1.id);
+        return {
+            player1: isPlayer1 ? this.player1 : this.player2,
+            player2: isPlayer1 ? this.player2 : this.player1,
         };
-        if(playerid == this.player2.id){
-            let aux = res.player1;
-            res.player1 = res.player2;
-            res.player2 = aux;
-        }
-        return res;
     }
 
     updateNextAction(playerid, action){
@@ -75,71 +85,21 @@ module.exports = class Match {
         });
     }
 
-    //Main game loop runs here
-    async gameLoop(){
-        await this.pushStates();
-        while(this.winCheck() == 'notyet'){
-            console.log('loop started');
-            this.sendEventToPlayers('roundStart');
-            await this.countdown(5);
-            console.log('countdown ended');
-            this.sendRoundEndData();
-            // A problem that i faced is that when the round ends, i asked for sockets to push their actions to server
-            // The problem is that i need to "wait" this results or server will run following lines without them
-            // But if one of the players disconnect, i cant wait forever
-            // My curr solution is to push the action at the moment player presses it, but it can lead to lag issues.
-            await this.updateStates();
-            await this.pushStates();
-            await this.countdown(1);
-        }
-        this.sendResult(this.winCheck());
-    }
-
-    pushStates(){
-        return new Promise(resolve => {
-            this.io.sockets.connected[this.player1.id].emit('stateUpdate', this.state(this.player1.id));
-            this.io.sockets.connected[this.player2.id].emit('stateUpdate', this.state(this.player2.id));
-            resolve();
-        })
-    }
-
     updateStates(){
         return new Promise(resolve => {
             this.turnCheck(this.p1_nextAction, this.p2_nextAction);
-            console.log(this.p1_nextAction, this.p2_nextAction);
+            // console.log(this.p1_nextAction, this.p2_nextAction);
             this.p1_nextAction = undefined;
             this.p2_nextAction = undefined;
             resolve();
         });
     }
 
-    sendEventToPlayers(message){ //Need to refactor this to rooms, maybe better even with only 2 player per room
-        this.io.sockets.connected[this.player1.id].emit(message);
-        this.io.sockets.connected[this.player2.id].emit(message);
-    }
-
-    sendResult(result){
-        this.io.sockets.connected[this.player1.id].emit('result', result);
-        this.io.sockets.connected[this.player2.id].emit('result', result);
-    }
-
-    sendRoundEndData(){
-        this.io.sockets.connected[this.player1.id].emit('roundEnd', this.constructAnimData(this.player1.id));
-        this.io.sockets.connected[this.player2.id].emit('roundEnd', this.constructAnimData(this.player2.id));
-    }
-
     constructAnimData(playerid){
-        if(playerid == this.player1.id){
-            return {
-                playerAnim: this.p1_nextAction,
-                enemyAnim: this.p2_nextAction,
-            }
-        } else {
-            return {
-                playerAnim: this.p2_nextAction,
-                enemyAnim: this.p1_nextAction,
-            }
+        let isPlayer1 = (playerid == this.player1.id);
+        return {
+            playerAnim: isPlayer1 ? this.p1_nextAction : this.p2_nextAction,
+            enemyAnim:  isPlayer1 ? this.p2_nextAction : this.p1_nextAction,
         }
-
     }
 }
