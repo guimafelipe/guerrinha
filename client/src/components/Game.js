@@ -85,6 +85,10 @@ class Game extends Component {
         this.socket.on('matchEnd', (result) => {
             this.setState({roundStage: result});
         });
+        this.socket.on('updatedActionFeedback', (action) => {
+            //Inserir aqui logia para deixar o botão ativado
+            //De acordo com a action
+        });
     }
 
     componentWillReceiveProps(nextProps){

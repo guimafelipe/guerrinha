@@ -76,7 +76,8 @@ module.exports = class Match {
             this.p1_nextAction = action;
         } else if (this.player2.id == playerid){
             this.p2_nextAction = action;
-        }
+        } else {return;} // To not send feedback
+        this.io.sockets.connected[playerid].emit('updatedActionFeedback', action);
     }
 
     countdown(seconds){

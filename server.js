@@ -19,8 +19,10 @@ const io = socket(server);
 // matches = []; // Lista de partidas acontecendo
 
 function socketSetup(socket){
-    socket.on("setAction", action => {
-        match.updateNextAction(socket.id, action.action);
+    socket.on("setAction", data => {
+        // Como identificar a match?
+        // matches[data.matchid].update...
+        match.updateNextAction(socket.id, data.action);
     });
 }
 
