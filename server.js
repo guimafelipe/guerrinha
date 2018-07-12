@@ -15,29 +15,42 @@ const server = http.createServer(app);
 const io = socket(server);
 
 // players = []; // Lista de players online
-//Primeiro vou fazer um teste com dos players só
+// Primeiro vou fazer um teste com dos players só
 // matches = []; // Lista de partidas acontecendo
 
+const matches = [];
+
+const lobby = new Lobby();
+
 function socketSetup(socket){
+    socket.queueState = 'free';
+    socket.name = 'new player';
     socket.on("setAction", data => {
         // Como identificar a match?
         // matches[data.matchid].update...
-        match.updateNextAction(socket.id, data.action);
+        // match.updateNextAction(socket.id, data.action);
+        // Provavelmente o melhor a se fazer é passar isso pra dentro da match
+    });
+    socket.on('enterQueue', () => {
+        socket.queueState = 'onQueue';
+        lobby.addToLobby(socket.id);
+    });
+    socket.on('exitQueue', () => {
+        socket.queueState = 'free';
+        lobby.removeFromLobby(socket.id);
+    });
+    socket.on('setName', name => {
+        socket.name = name;
+    });
+    socket.on('startMatch', oponentid => {
+        let match = lobby.createMatchWith(socket.id, oponentid);
+        if(match) matches.push(match);
     });
 }
 
-var player1, player2, match;
-
 io.on("connection", socket => {
     console.log("New client connected");
-    if(!player1) {
-        player1 = new Player("fulano1", socket.id);
-    } else {
-        player2 = new Player("fulano2", socket.id);
-        match = new Match(player1, player2, io);
-        socketSetup(io.sockets.connected[player1.id]);
-        socketSetup(socket);
-    }
+    socketSetup(socket);
     socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
