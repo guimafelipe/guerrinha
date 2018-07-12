@@ -5,22 +5,36 @@ module.exports = class Match {
         this.player1 = player1;
         this.player2 = player2;
         this.io = io;
+        this.room = room;
 
         this.loopState = 'awaiting';
 
+        this.setupSockets = this.setupSockets.bind(this);
+
+        this.setupSocket(this.player1.id);
+        this.setupSocket(this.player2.id);
+
         // Setup sockets rooms
         this.gameLoop();
+    }
+
+    setupSocket(socketid){
+        let socket = this.io.sockets.connected[socketid];
+        // socket.join(this.room); // Necessário? Já to fazendo o bind do this
+        socket.on('setupAction', data => {
+            this.updateNextAction(socketid, data.action);
+        })
     }
 
     //Main game loop runs here
     async gameLoop(){
         this.sendEventToPlayers('stateUpdate', this.state(this.player1.id), this.state(this.player2.id));
         while(this.winCheck() == 'notyet'){
-            console.log('loop started');
+            this.loopState = 'running';
+
             this.sendEventToPlayers('roundStart');
 
             await this.countdown(5);
-            console.log('countdown ended');
 
             this.sendEventToPlayers('roundEnd', this.constructAnimData(this.player1.id), this.constructAnimData(this.player2.id));
 
@@ -34,6 +48,7 @@ module.exports = class Match {
 
             await this.countdown(1);
         }
+        this.loopState = 'matchFinished';
         this.sendEventToPlayers('matchEnd', this.winCheck());
     }
 
@@ -59,8 +74,8 @@ module.exports = class Match {
     }
 
     sendEventToPlayers(message, data1, data2){ //Need to refactor this to rooms, maybe better even with only 2 player per room
-        this.io.sockets.connected[this.player1.id].emit(message, data1);
-        this.io.sockets.connected[this.player2.id].emit(message, data2 || data1); //Send data2 if exists, or else send data 1
+        this.io.to(this.player1.id).emit(message, data1);
+        this.io.to(this.player2.id).emit(message, data2 || data1); //Send data2 if exists, or else send data 1
     }
 
     state(playerid){

@@ -2,10 +2,11 @@ const Player = require('./Player');
 const Match = require('./Match');
 
 module.exports = class Lobby{
-    constructor(io){
+    constructor(io, matchManager){
         this.queueUsers = {}; //My dict of online users
                               //Schema socketid: name
         this.io = io;
+        this.matchManager = matchManager;
     }
 
     addToLobby(socketid, name){
@@ -22,10 +23,8 @@ module.exports = class Lobby{
         if(!this.queueUsers.hasProperty(existentid)) return null;
         let challangerName = this.io.sockets.connected[challangerid].name;
         let existentName = this.queueUsers[existentid];
-        let player1 = new Player(existentName, existentid);
-        let player2 = new Player(challangerName, challangerid);
         this.removeFromLobby(existentid);
-        return new Match(player1, player2, this.io);
+        return this.matchManager.createNewMatch({id: existentid, name: existentName}, {id: challangerid, name: challangerName});
     }
 
     onLobbyUpdated(){
