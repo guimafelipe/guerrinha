@@ -28,8 +28,8 @@ const lobby = new Lobby(io, matchesManager);
 function socketSetup(socket){
     socket.queueState = 'free';
     socket.name = 'new player';
-    socket.on('enterQueue', () => {
-        lobby.addToLobby(socket.id);
+    socket.on('enterQueue', (name) => {
+        lobby.addToLobby(socket.id, name);
         socket.queueState = 'onQueue';
     });
     socket.on('exitQueue', () => {
@@ -45,12 +45,12 @@ function socketSetup(socket){
             console.log('ERROR: ao criar partida entre ' + socket.id + ' e ' + oponentid + '.');
         }
     });
+    socket.on("disconnect", () => console.log("Client disconnected"));
 }
 
 io.on("connection", socket => {
     console.log("New client connected");
     socketSetup(socket);
-    socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

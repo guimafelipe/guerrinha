@@ -19,13 +19,14 @@ class App extends Component {
   componentDidMount() {
     const {endpoint} = this.state;
     const skt = socketIOClient(endpoint);
+    skt.name = 'player';
     this.setState({socket: skt});
   }
 
   render() {
     return (
       <div className="App">
-        <Lobby/>
+        <Lobby socket={this.state.socket}/>
         <Game socket={this.state.socket}/>
       </div>
     );

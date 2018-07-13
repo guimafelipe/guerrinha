@@ -20,7 +20,7 @@ module.exports = class Lobby{
     }
 
     createMatchWith(challangerid, existentid){
-        if(!this.queueUsers.hasProperty(existentid)) return null;
+        if(!this.queueUsers.existentid) return null;
         let challangerName = this.io.sockets.connected[challangerid].name;
         let existentName = this.queueUsers[existentid];
         this.removeFromLobby(existentid);
