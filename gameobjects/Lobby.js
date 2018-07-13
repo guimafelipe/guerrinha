@@ -15,12 +15,13 @@ module.exports = class Lobby{
     }
 
     removeFromLobby(socketid){
-        if(this.queueUsers.hasProperty(socketid)) delete this.queueUsers[socketid];
+        if(this.queueUsers[socketid]) delete this.queueUsers[socketid];
         this.onLobbyUpdated();
     }
 
     createMatchWith(challangerid, existentid){
-        if(!this.queueUsers.existentid) return null;
+        if(!this.queueUsers[existentid]) return null;
+        console.log('oi');
         let challangerName = this.io.sockets.connected[challangerid].name;
         let existentName = this.queueUsers[existentid];
         this.removeFromLobby(existentid);

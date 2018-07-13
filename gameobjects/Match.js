@@ -9,7 +9,7 @@ module.exports = class Match {
 
         this.loopState = 'awaiting';
 
-        this.setupSockets = this.setupSockets.bind(this);
+        this.setupSocket = this.setupSocket.bind(this);
 
         this.setupSocket(this.player1.id);
         this.setupSocket(this.player2.id);
