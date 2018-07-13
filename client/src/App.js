@@ -13,6 +13,7 @@ class App extends Component {
       response: false,
       endpoint: SERVER + PORT,
       socket: null,
+      inMatch: false,
     }
   }
 
@@ -20,6 +21,12 @@ class App extends Component {
     const {endpoint} = this.state;
     const skt = socketIOClient(endpoint);
     skt.name = 'player';
+    skt.on('matchLeave', () => {
+      this.setState({inMatch: false})
+    });
+    skt.on('matchStart', () => {
+      this.setState({inMatch: true})
+    });
     this.setState({socket: skt});
   }
 

@@ -1,5 +1,3 @@
-const Player = require('./Player');
-
 module.exports = class Match {
     constructor(player1, player2, io, room){
         this.player1 = player1;
@@ -8,6 +6,7 @@ module.exports = class Match {
         this.room = room;
 
         this.loopState = 'awaiting';
+        this.matchQuited = false;
 
         this.setupSocket = this.setupSocket.bind(this);
 
@@ -21,15 +20,25 @@ module.exports = class Match {
     setupSocket(socketid){
         let socket = this.io.sockets.connected[socketid];
         // socket.join(this.room); // Necessário? Já to fazendo o bind do this
-        socket.on('setupAction', data => {
-            this.updateNextAction(socketid, data.action);
+        socket.on('setAction', data => {
+            if(data.action === 'quit') this.endMatch(socketid);
+            else this.updateNextAction(socketid, data.action);
         })
+    }
+
+    endMatch(){
+        this.io.sockets.connected[this.player1.id].queueStatus = 'free';
+        this.io.sockets.connected[this.player2.id].queueStatus = 'free';
+        this.sendEventToPlayers('matchLeave');
+        this.matchQuited = true; 
+        if(this.destructCallback) this.destructCallback(this.room);
     }
 
     //Main game loop runs here
     async gameLoop(){
+        this.sendEventToPlayers('matchStart');
         this.sendEventToPlayers('stateUpdate', this.state(this.player1.id), this.state(this.player2.id));
-        while(this.winCheck() == 'notyet'){
+        while(this.winCheck() == 'notyet' && !this.matchQuited){
             this.loopState = 'running';
 
             this.sendEventToPlayers('roundStart');
@@ -74,6 +83,7 @@ module.exports = class Match {
     }
 
     sendEventToPlayers(message, data1, data2){ //Need to refactor this to rooms, maybe better even with only 2 player per room
+        if(this.matchQuited) return;
         this.io.to(this.player1.id).emit(message, data1);
         this.io.to(this.player2.id).emit(message, data2 || data1); //Send data2 if exists, or else send data 1
     }

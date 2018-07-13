@@ -25,6 +25,8 @@ module.exports = class Lobby{
         let challangerName = this.io.sockets.connected[challangerid].name;
         let existentName = this.queueUsers[existentid];
         this.removeFromLobby(existentid);
+        this.io.sockets.connected[challangerid].queueStatus = 'inMatch';
+        this.io.sockets.connected[existentid].queueStatus = 'inMatch';
         return this.matchManager.createNewMatch({id: existentid, name: existentName}, {id: challangerid, name: challangerName});
     }
 

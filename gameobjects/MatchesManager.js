@@ -14,7 +14,7 @@ module.exports = class MatchesManager {
         let player2 = new Player(p2data.name, p2data.id);
         let matchid = this.matchCounter.toString();
         let match = new Match(player1, player2, this.io, matchid); 
-        match.desctructCallback = this.deleteMatch;
+        match.destructCallback = this.deleteMatch;
         this.matches[matchid] = match;
         this.matchCounter++;
         return match;

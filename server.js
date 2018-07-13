@@ -45,6 +45,9 @@ function socketSetup(socket){
             console.log('ERROR: ao criar partida entre ' + socket.id + ' e ' + oponentid + '.');
         }
     });
+    socket.on('quitMatch', () => {
+        socket.queueState = 'free';
+    });
     socket.on("disconnect", () => console.log("Client disconnected"));
 }
 
