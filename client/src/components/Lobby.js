@@ -28,10 +28,8 @@ class Lobby extends Component {
         this.socket.on('lobbyUpdated', lobbyList => {
             let lobbyArray = [];
             for(var key in lobbyList){
-                console.log(key);
                 lobbyArray.push({socketid: key, name: lobbyList[key]});
             }
-            console.log(lobbyArray);
             this.setState({lobbyArray: lobbyArray})
         });
     }
@@ -41,6 +39,7 @@ class Lobby extends Component {
         }
     }
     render() {
+        if(this.props.inMatch) return null;
          return (
             <div className="LobbyList">
                 <p> esse é o lobby</p> 

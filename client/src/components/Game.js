@@ -98,6 +98,7 @@ class Game extends Component {
     }
 
     render (){
+        if(!this.props.inMatch) return null;
         return (
             <div className="game">
                 <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>

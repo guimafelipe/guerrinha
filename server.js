@@ -48,7 +48,11 @@ function socketSetup(socket){
     socket.on('quitMatch', () => {
         socket.queueState = 'free';
     });
-    socket.on("disconnect", () => console.log("Client disconnected"));
+    socket.on("disconnect", () => {
+        console.log("Client disconnected")
+        lobby.removeFromLobby(socket.id);
+    });
+    lobby.onLobbyUpdated();
 }
 
 io.on("connection", socket => {

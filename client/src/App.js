@@ -22,10 +22,10 @@ class App extends Component {
     const skt = socketIOClient(endpoint);
     skt.name = 'player';
     skt.on('matchLeave', () => {
-      this.setState({inMatch: false})
+      this.setState({inMatch: false, socket: skt})
     });
     skt.on('matchStart', () => {
-      this.setState({inMatch: true})
+      this.setState({inMatch: true, socket: skt})
     });
     this.setState({socket: skt});
   }
@@ -33,8 +33,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Lobby socket={this.state.socket}/>
-        <Game socket={this.state.socket}/>
+        <Lobby inMatch={this.state.inMatch} socket={this.state.socket}/>
+        <Game inMatch={this.state.inMatch} socket={this.state.socket}/>
       </div>
     );
   }
