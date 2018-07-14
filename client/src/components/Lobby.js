@@ -47,7 +47,7 @@ class Lobby extends Component {
                 <Button handle={this.exitQueueHandle} name={'Sair'}/>
                 <LobbyButtonsList lobbyArray={this.state.lobbyArray} handle={this.startMatchHandle}/>
             </div>
-         ); //Aqui deve ter um for iterando em playersList pra criar botões 
+         );
     }
 
 } 

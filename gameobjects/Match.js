@@ -19,7 +19,6 @@ module.exports = class Match {
 
     setupSocket(socketid){
         let socket = this.io.sockets.connected[socketid];
-        // socket.join(this.room); // Necessário? Já to fazendo o bind do this
         socket.on('setAction', data => {
             if(data.action === 'quit') this.endMatch(socketid);
             else this.updateNextAction(socketid, data.action);
@@ -82,7 +81,7 @@ module.exports = class Match {
         return 'notyet';
     }
 
-    sendEventToPlayers(message, data1, data2){ //Need to refactor this to rooms, maybe better even with only 2 player per room
+    sendEventToPlayers(message, data1, data2){
         if(this.matchQuited) return;
         this.io.to(this.player1.id).emit(message, data1);
         this.io.to(this.player2.id).emit(message, data2 || data1); //Send data2 if exists, or else send data 1
@@ -114,7 +113,6 @@ module.exports = class Match {
     updateStates(){
         return new Promise(resolve => {
             this.turnCheck(this.p1_nextAction, this.p2_nextAction);
-            // console.log(this.p1_nextAction, this.p2_nextAction);
             this.p1_nextAction = undefined;
             this.p2_nextAction = undefined;
             resolve();

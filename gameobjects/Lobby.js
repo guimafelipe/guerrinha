@@ -4,7 +4,7 @@ const Match = require('./Match');
 module.exports = class Lobby{
     constructor(io, matchManager){
         this.queueUsers = {}; //My dict of online users
-                              //Schema socketid: name
+                              //Schema: socketid, name
         this.io = io;
         this.matchManager = matchManager;
     }
