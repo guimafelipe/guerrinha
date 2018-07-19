@@ -3,6 +3,8 @@ import EnemyUI from './EnemyUI';
 import GameScreen from './GameScreen';
 import PlayerUI from './PlayerUI';
 import ButtonsGroup from './ButtonsGroup';
+import {Card} from '@blueprintjs/core';
+import {H4} from '@blueprintjs/core';
 
 class Game extends Component {
     constructor (props) {
@@ -101,16 +103,19 @@ class Game extends Component {
         // if(!this.props.inMatch) return null;
         return (
             <div className="game">
+                <Card>
                 <EnemyUI name={this.state.enemyName} bullets={this.state.enemyBullets} lifes={this.state.enemyLifes}/>
-                <p></p>
-                <p>{this.state.roundStage}</p>
-                <p></p>
+                </Card>
+                <Card>
+                <H4>{this.state.roundStage}</H4>
                 <GameScreen enemyState={this.state.playerAnim} playerState={this.state.enemyAnim}/>
-                <p></p>
+                </Card>
+                <Card>
                 <PlayerUI name={this.state.playerName} bullets={this.state.playerBullets} lifes={this.state.playerLifes}/>
                 <p></p>
                 <ButtonsGroup shotHandle={this.shotHandle} reloadHandle={this.reloadHandle}
                  shieldHandle={this.shieldHandle} quitHandle={this.quitHandle}/>
+                </Card>
                 <p>Aqui aparece coisas do gameplay </p>
             </div>
         )

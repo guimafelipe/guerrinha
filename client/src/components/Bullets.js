@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import {Text} from '@blueprintjs/core';
 
 class Bullets extends Component {
     render (){
         return (
             <div>
-                <span> Bullets: {this.props.qnt}</span>
+                <Text> Bullets: {this.props.qnt}</Text>
             </div>
         );
     }

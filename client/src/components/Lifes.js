@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import {Text} from '@blueprintjs/core';
 
 class Lifes extends Component {
     render (){
         return (
             <div>
-                <span> Lifes: {this.props.qnt}</span>
+                <Text> Lifes: {this.props.qnt}</Text>
             </div>
         );
     }
